@@ -1,0 +1,14 @@
+{
+	"name": "moc/synchronizeurl",
+	"type": "typo3-flow-package",
+	"description": "TYPO3 Neos package that keep page titles and urls in sync by updating the URL every time the title changes",
+	"license": "LGPL-3.0+",
+	"require": {
+		"typo3/neos": ">=1.2"
+	},
+	"autoload": {
+		"psr-0": {
+			"MOC\\SynchronizeUrl": "Classes"
+		}
+	}
+}
