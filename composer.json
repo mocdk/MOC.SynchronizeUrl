@@ -1,8 +1,15 @@
 {
 	"name": "moc/synchronizeurl",
 	"type": "typo3-flow-package",
-	"description": "TYPO3 Neos package that keep page titles and urls in sync by updating the URL every time the title changes",
+	"description": "Neos CMS package that keep page titles and URLs in sync by updating the URL every time the title changes",
+	"keywords": [ "url", "neos", "flow" ],
 	"license": "MIT",
+	"authors": [
+		{
+			"name": "Aske Ertmann",
+			"email": "aske@moc.net"
+		}
+	],
 	"require": {
 		"typo3/neos": ">=1.2"
 	},
