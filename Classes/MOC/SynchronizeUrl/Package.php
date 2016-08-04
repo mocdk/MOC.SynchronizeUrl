@@ -37,12 +37,6 @@ class Package extends BasePackage {
 				$node->setProperty('uriPathSegment', $newUriPathSegment);
 				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
 			} elseif ($propertyName === 'uriPathSegment' && $newUriPathSegment !== NULL && $newValue !== $newUriPathSegment) {
-				$initialUriPathSegment = $newUriPathSegment;
-            	$i = 1;
-            	while ($q->siblings('[instanceof TYPO3.Neos:Document][uriPathSegment="' . $newUriPathSegment . '"]')->count() > 0) {
-                	$newUriPathSegment = $initialUriPathSegment . '-' . $i++;
-            	}
-
 				$node->setProperty('uriPathSegment', $newUriPathSegment);
 				$newUriPathSegment = NULL;
 			}
