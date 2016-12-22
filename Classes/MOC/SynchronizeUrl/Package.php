@@ -26,8 +26,13 @@ class Package extends BasePackage {
 				$node->setProperty('uriPathSegment', $newUriPathSegment);
 				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
 			} elseif ($propertyName === 'uriPathSegment' && $newUriPathSegment !== NULL && $newValue !== $newUriPathSegment) {
-				$node->setProperty('uriPathSegment', $newUriPathSegment);
-				$newUriPathSegment = NULL;
+				if (method_exists('TYPO3\Neos\Utility\NodeUriPathSegmentGenerator', 'setUniqueUriPathSegment')) {
+					NodeUriPathSegmentGenerator::setUniqueUriPathSegment($node);
+				} else {
+					$node->setProperty('uriPathSegment', $newUriPathSegment);
+					$newUriPathSegment = NULL;
+				}
+				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
 			}
 		});
 	}
