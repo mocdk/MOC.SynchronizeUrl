@@ -32,7 +32,7 @@ class Package extends BasePackage {
 					$node->setProperty('uriPathSegment', $newUriPathSegment);
 					$newUriPathSegment = NULL;
 				}
-                $bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
+				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
 			}
 		});
 	}
