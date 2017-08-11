@@ -25,12 +25,8 @@ class Package extends BasePackage
             'nodePropertyChanged',
             function (Node $node, $propertyName, $oldValue, $newValue) use ($bootstrap, &$newUriPathSegment) {
                 if ($propertyName === 'title' && $node->getNodeType()->isOfType('Neos.Neos:Document')) {
-                    if (method_exists(NodeUriPathSegmentGenerator::class, 'generateUriPathSegment')) {
-                        $nodeUriPathSegmentGenerator = $bootstrap->getObjectManager()->get(NodeUriPathSegmentGenerator::class);
-                        $newUriPathSegment = strtolower($nodeUriPathSegmentGenerator->generateUriPathSegment($node));
-                    } else {
-                        $newUriPathSegment = strtolower(Utility::renderValidNodeName($node->getProperty('title') ?: $node->getName()));
-                    }
+                    $nodeUriPathSegmentGenerator = $bootstrap->getObjectManager()->get(NodeUriPathSegmentGenerator::class);
+                    $newUriPathSegment = strtolower($nodeUriPathSegmentGenerator->generateUriPathSegment($node));
                     $node->setProperty('uriPathSegment', $newUriPathSegment);
                     $bootstrap->getObjectManager()->get(RouteCacheFlusher::class)->registerNodeChange($node);
                 } elseif ($propertyName === 'uriPathSegment' && $newUriPathSegment !== null && $newValue !== $newUriPathSegment) {
