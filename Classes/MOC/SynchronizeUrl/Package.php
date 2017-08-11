@@ -1,35 +1,38 @@
 <?php
 namespace MOC\SynchronizeUrl;
 
-use TYPO3\Flow\Package\Package as BasePackage;
-use TYPO3\TYPO3CR\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Utility;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Package\Package as BasePackage;
+use Neos\Neos\Routing\Cache\RouteCacheFlusher;
+use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 
-class Package extends BasePackage {
-
-	/**
-	 * Invokes custom PHP code directly after the package manager has been initialized.
-	 *
-	 * @param \TYPO3\Flow\Core\Bootstrap $bootstrap The current bootstrap
-	 * @return void
-	 */
-	public function boot(\TYPO3\Flow\Core\Bootstrap $bootstrap) {
-		$dispatcher = $bootstrap->getSignalSlotDispatcher();
-		$newUriPathSegment = NULL;
-		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePropertyChanged', function(Node $node, $propertyName, $oldValue, $newValue) use($bootstrap, &$newUriPathSegment) {
-			if ($propertyName === 'title' && $node->getNodeType()->isOfType('TYPO3.Neos:Document')) {
-				if (method_exists('TYPO3\Neos\Utility\NodeUriPathSegmentGenerator', 'generateUriPathSegment')) {
-					$nodeUriPathSegmentGenerator = $bootstrap->getObjectManager()->get('TYPO3\Neos\Utility\NodeUriPathSegmentGenerator');
-					$newUriPathSegment = strtolower($nodeUriPathSegmentGenerator->generateUriPathSegment($node));
-				} else {
-					$newUriPathSegment = strtolower(\TYPO3\TYPO3CR\Utility::renderValidNodeName($node->getProperty('title') ?: $node->getName()));
-				}
-				$node->setProperty('uriPathSegment', $newUriPathSegment);
-				$bootstrap->getObjectManager()->get('TYPO3\Neos\Routing\Cache\RouteCacheFlusher')->registerNodeChange($node);
-			} elseif ($propertyName === 'uriPathSegment' && $newUriPathSegment !== NULL && $newValue !== $newUriPathSegment) {
-				$node->setProperty('uriPathSegment', $newUriPathSegment);
-				$newUriPathSegment = NULL;
-			}
-		});
-	}
-
+class Package extends BasePackage
+{
+    /**
+     * Invokes custom PHP code directly after the package manager has been initialized.
+     *
+     * @param Bootstrap $bootstrap The current bootstrap
+     * @return void
+     */
+    public function boot(Bootstrap $bootstrap)
+    {
+        $dispatcher = $bootstrap->getSignalSlotDispatcher();
+        $newUriPathSegment = null;
+        $dispatcher->connect(
+            Node::class,
+            'nodePropertyChanged',
+            function (Node $node, $propertyName, $oldValue, $newValue) use ($bootstrap, &$newUriPathSegment) {
+                if ($propertyName === 'title' && $node->getNodeType()->isOfType('Neos.Neos:Document')) {
+                    $nodeUriPathSegmentGenerator = $bootstrap->getObjectManager()->get(NodeUriPathSegmentGenerator::class);
+                    $newUriPathSegment = strtolower($nodeUriPathSegmentGenerator->generateUriPathSegment($node));
+                    $node->setProperty('uriPathSegment', $newUriPathSegment);
+                    $bootstrap->getObjectManager()->get(RouteCacheFlusher::class)->registerNodeChange($node);
+                } elseif ($propertyName === 'uriPathSegment' && $newUriPathSegment !== null && $newValue !== $newUriPathSegment) {
+                    $node->setProperty('uriPathSegment', $newUriPathSegment);
+                    $newUriPathSegment = null;
+                }
+            });
+    }
 }
