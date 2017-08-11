@@ -19,4 +19,4 @@ Compatible with Neos 3.x+, 2.x+
 Installation
 ------------
 
-composer require "moc/synchronizeurl:~1.0"
+composer require "moc/synchronizeurl:~2.0"
