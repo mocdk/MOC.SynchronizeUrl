@@ -14,7 +14,7 @@ Neos CMS package that keep page titles and URLs in sync by updating the URL ever
 It's possible to change the URL to something else afterwards, however it will be overridden every time
 the page title changes.
 
-Compatible with Neos 3.x+, 2.x+
+Compatible with Neos 4.x, 3.x, 2.x
 
 Installation
 ------------
