@@ -27,6 +27,22 @@ class Package extends BasePackage
                 if ($propertyName === 'title' && $node->getNodeType()->isOfType('Neos.Neos:Document')) {
                     $nodeUriPathSegmentGenerator = $bootstrap->getObjectManager()->get(NodeUriPathSegmentGenerator::class);
                     $newUriPathSegment = strtolower($nodeUriPathSegmentGenerator->generateUriPathSegment($node));
+
+                    $uriPathSegmentsOnLevel = [];
+                    foreach ($node->getParent()->getChildNodes() as $childNode) {
+                        if ($childNode->getIdentifier() === $node->getIdentifier()) {
+                            continue;
+                        }
+                        $uriPathSegmentsOnLevel[] = $childNode->getProperty('uriPathSegment');
+                    }
+
+                    $increments = 1;
+                    $originalNewUriPathSegment = $newUriPathSegment;
+                    while(in_array($newUriPathSegment, $uriPathSegmentsOnLevel)) {
+                        $newUriPathSegment = $originalNewUriPathSegment . '-' . $increments;
+                        $increments++;
+                    }
+
                     $node->setProperty('uriPathSegment', $newUriPathSegment);
                     $bootstrap->getObjectManager()->get(RouteCacheFlusher::class)->registerNodeChange($node);
                 } elseif ($propertyName === 'uriPathSegment' && $newUriPathSegment !== null && $newValue !== $newUriPathSegment) {
